@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World of Cubes</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+      display: block;
+      margin: 0 auto;
+      background-color: #87CEEB; /* Sky blue */
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    canvas.width = 800;
+    canvas.height = 600;
+    const ctx = canvas.getContext('2d');
+    const tileSize = 20;
+
+    const worldWidth = canvas.width / tileSize;
+    const worldHeight = canvas.height / tileSize;
+    const world = [];
+
+    // Initialize the world with dirt and grass blocks
+    for (let y = 0; y < worldHeight; y++) {
+      const row = [];
+      for (let x = 0; x < worldWidth; x++) {
+        if (y < worldHeight / 2) {
+          row.push('sky');
+        } else if (y === Math.floor(worldHeight / 2)) {
+          row.push('grass');
+        } else {
+          row.push('dirt');
+        }
+      }
+      world.push(row);
+    }
+
+    // Draw the world
+    function drawWorld() {
+      for (let y = 0; y < worldHeight; y++) {
+        for (let x = 0; x < worldWidth; x++) {
+          let color;
+          switch (world[y][x]) {
+            case 'sky':
+              color = '#87CEEB';
+              break;
+            case 'grass':
+              color = '#32CD32';
+              break;
+            case 'dirt':
+              color = '#8B4513';
+              break;
+          }
+          ctx.fillStyle = color;
+          ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+        }
+      }
+    }
+
+    const player = {
+      x: Math.floor(worldWidth / 2),
+      y: Math.floor(worldHeight / 2),
+      color: 'red'
+    };
+
+    function drawPlayer() {
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x * tileSize, player.y * tileSize, tileSize, tileSize);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowUp':
+          player.y = Math.max(0, player.y - 1);
+          break;
+        case 'ArrowDown':
+          player.y = Math.min(worldHeight - 1, player.y + 1);
+          break;
+        case 'ArrowLeft':
+          player.x = Math.max(0, player.x - 1);
+          break;
+        case 'ArrowRight':
+          player.x = Math.min(worldWidth - 1, player.x + 1);
+          break;
+      }
+      updateGame();
+    });
+
+    function updateGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawWorld();
+      drawPlayer();
+    }
+
+    updateGame();
+  </script>
+</body>
+</html>
